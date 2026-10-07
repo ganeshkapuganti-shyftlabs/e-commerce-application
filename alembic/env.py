@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 load_dotenv()
 
 from database import Base  # noqa: E402
-from models import category, user, order, order_items, product, payment  # noqa: E402,F401
+from models import category, user, order, order_items, product, payment, cart, cart_item  # noqa: E402,F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

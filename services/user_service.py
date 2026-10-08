@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from auth import hash_password
+from authh import hash_password
 from crud import user as user_crud
 from models.user import User
 from schemas.user import UserCreate, UserPatch

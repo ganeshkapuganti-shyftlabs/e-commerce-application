@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from auth import create_access_token, verify_password
+from authh import create_access_token, verify_password
 from crud import user as user_crud
 
 

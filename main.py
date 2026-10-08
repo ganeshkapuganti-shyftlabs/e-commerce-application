@@ -1,5 +1,5 @@
 from fastapi import Depends, FastAPI
-from auth import get_current_user
+from authh import get_current_user
 from routers import auth, cart, categories, orders, users, products,payments, order_items
 
 app = FastAPI()

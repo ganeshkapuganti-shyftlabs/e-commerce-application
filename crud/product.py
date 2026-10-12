@@ -4,6 +4,17 @@ from models.product import Product
 def get_by_id(db: Session, product_id: int):
     return db.query(Product).filter(Product.id == product_id).first()
 
+def get_many_for_update(db: Session, product_ids: list[int]):
+    # lock in id order so two checkouts touching the same products can't deadlock
+    return (
+        db.query(Product)
+        .filter(Product.id.in_(product_ids))
+        .order_by(Product.id)
+        .populate_existing()
+        .with_for_update()
+        .all()
+    )
+
 def get_multi(db: Session,limit: int,offset: int,category_id: int | None = None,search: str | None = None,min_price: float | None = None,max_price: float | None = None,):
     query = db.query(Product)
     if category_id is not None:
@@ -15,7 +26,7 @@ def get_multi(db: Session,limit: int,offset: int,category_id: int | None = None,
     if max_price is not None:
         query = query.filter(Product.price <= max_price)
     total = query.count()
-    items = query.offset(offset).limit(limit).all()
+    items = query.order_by(Product.id).offset(offset).limit(limit).all()
     return total, items
 
 def create(db: Session,category_id: int,name: str,description: str,price: float,stock_quantity: int,):

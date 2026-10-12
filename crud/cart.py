@@ -9,6 +9,10 @@ def get_by_user_id(db: Session, user_id: int):
     return db.query(Cart).filter(Cart.user_id == user_id).first()
 
 
+def get_by_user_id_for_update(db: Session, user_id: int):
+    return db.query(Cart).filter(Cart.user_id == user_id).with_for_update().first()
+
+
 def create(db: Session, user_id: int):
     cart = Cart(user_id=user_id)
     db.add(cart)
@@ -66,3 +70,11 @@ def delete_item(db: Session, item: CartItem):
 def clear(db: Session, cart: Cart):
     db.query(CartItem).filter(CartItem.cart_id == cart.id).delete(synchronize_session=False)
     db.commit()
+
+
+def delete_items(db: Session, cart_id: int, item_ids: list[int]):
+    # delete only the given rows, not anything added to the cart since they were read
+    db.query(CartItem).filter(
+        CartItem.cart_id == cart_id, CartItem.id.in_(item_ids)
+    ).delete(synchronize_session=False)
+    db.flush()

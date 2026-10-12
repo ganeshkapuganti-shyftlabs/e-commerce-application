@@ -1,11 +1,12 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from models.enums import OrderStatus
+from schemas.order_items import OrderItemResponse
 
 class OrderCreate(BaseModel):
-    user_id: int
-    status: OrderStatus = OrderStatus.pending
-    total_amount: float
+    # user comes from the token; price, total and status are set by the server
+    product_id: int
+    quantity: int = Field(default=1, ge=1)
 
 
 class OrderStatusUpdate(BaseModel):
@@ -19,6 +20,10 @@ class OrderResponse(BaseModel):
     total_amount: float
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class OrderDetailResponse(OrderResponse):
+    items: list[OrderItemResponse]
 
 
 class OrderListResponse(BaseModel):

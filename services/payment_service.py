@@ -22,8 +22,8 @@ def create_payment(db: Session, payment: PaymentCreate):
     )
 
 
-def list_payments(db: Session, limit: int, offset: int):
-    total, items = payment_crud.get_multi(db, limit, offset)
+def list_payments(db: Session, limit: int, offset: int, order_id: int | None = None):
+    total, items = payment_crud.get_multi(db, limit, offset, order_id)
     return {"total": total, "limit": limit, "offset": offset, "items": items}
 
 

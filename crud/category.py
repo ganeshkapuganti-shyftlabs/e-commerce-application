@@ -11,7 +11,7 @@ def get_by_name(db: Session, name: str):
 def get_multi(db: Session, limit: int, offset: int):
     query = db.query(Category)
     total = query.count()
-    items = query.offset(offset).limit(limit).all()
+    items = query.order_by(Category.id).offset(offset).limit(limit).all()
     return total, items
 
 

@@ -14,15 +14,18 @@ def get_multi(db: Session,limit: int,offset: int,order_id: int | None = None,pro
     if product_id is not None:
         query = query.filter(OrderItem.product_id == product_id)
     total = query.count()
-    items = query.offset(offset).limit(limit).all()
+    items = query.order_by(OrderItem.id).offset(offset).limit(limit).all()
     return total, items
 
 
-def create(db: Session, order_id: int, product_id: int, quantity: int, unit_price: float):
+def create(db: Session, order_id: int, product_id: int, quantity: int, unit_price: float, commit: bool = True):
     item = OrderItem(order_id=order_id,product_id=product_id,quantity=quantity,unit_price=unit_price,)
     db.add(item)
-    db.commit()
-    db.refresh(item)
+    if commit:
+        db.commit()
+        db.refresh(item)
+    else:
+        db.flush()
     return item
 
 def delete(db: Session, item: OrderItem):

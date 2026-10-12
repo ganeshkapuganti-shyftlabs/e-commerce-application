@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
+from authh import get_current_user
 from database import get_db
-from schemas.order import OrderCreate, OrderResponse, OrderStatusUpdate, OrderListResponse
+from models.user import User
+from schemas.order import OrderCreate, OrderDetailResponse, OrderResponse, OrderStatusUpdate, OrderListResponse
 from services import order_service
 
 
@@ -12,15 +14,15 @@ router = APIRouter(
 )
 
 
-@router.post("", response_model=OrderResponse, status_code=201)
-def create_order(order: OrderCreate, db: Session = Depends(get_db)):
-    return order_service.create_order(db, order)
+@router.post("", response_model=OrderDetailResponse, status_code=201)
+def create_order(order: OrderCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return order_service.create_order(db, current_user, order)
 
 
 @router.get("", response_model=OrderListResponse)
 def get_orders(
-    user_id: int | None = None,
-    status: str | None = None,
+    user_id: int ,
+    status: str,
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
     db: Session = Depends(get_db)
